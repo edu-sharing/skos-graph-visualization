@@ -5,7 +5,15 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SKOSService {
-
+  static SUPPORTED_LINKS = [{
+    id: 'exactMatch',
+    label: 'Exact Match'
+  },
+    { 
+      id: 'relatedMatch',
+      label: 'Related Match'
+    }
+    ];
   constructor(
     private http: HttpClient,
   ) { }
@@ -30,18 +38,20 @@ export class SKOSService {
   buildLinks(nodes: any[]) {
     const links = [];
     nodes.forEach(element => {
-    if(element.id.includes('new_lrt') && element.skos.relatedMatch) {
+      SKOSService.SUPPORTED_LINKS.forEach(link => {
+    if(element.id.includes('new_lrt') && element.skos[link.id]) {
       console.log(element);
-      element.skos.relatedMatch.forEach((target: any) => {
+      element.skos[link.id].forEach((target: any) => {
         // const target = nodes.filter((n) => n.id === related)[0];
         links.push({
             id: 'Link' + Math.random().toString().replace('.',''),
             source: element.id,
             target: target.id,
-            label: 'Related match'
-        })
+            label: link.label
+        });
       });
     }
+      });
   });
   return links;
   }
