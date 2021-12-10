@@ -15,6 +15,8 @@ export class AppComponent implements OnInit {
   ) {
   }
   async ngOnInit() {
-    this.data = await this.skos.getLinkStructure();
+    this.data = await this.skos.getLinkStructure(
+      'https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/new_lrt/index.json'
+    );
   }
 }
