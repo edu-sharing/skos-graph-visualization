@@ -14,6 +14,15 @@ export class SKOSService {
       id: "relatedMatch",
       label: "Related Match",
     },
+    {
+      id: "closeMatch",
+      label: "Close Match",
+    },
+    {
+      id: "broadMatch",
+      label: "Broad Match",
+    },
+
   ];
   constructor(private http: HttpClient) {}
   async fetchSKOS(url: string) {
