@@ -1,61 +1,63 @@
-import { HttpClient, HttpClientModule } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class SKOSService {
   static SUPPORTED_LINKS = [
     {
-      id: "exactMatch",
-      label: "Exact Match",
+      id: 'exactMatch',
+      label: 'Exact Match',
     },
     {
-      id: "relatedMatch",
-      label: "Related Match",
+      id: 'relatedMatch',
+      label: 'Related Match',
     },
     {
-      id: "closeMatch",
-      label: "Close Match",
+      id: 'closeMatch',
+      label: 'Close Match',
     },
     {
-      id: "broadMatch",
-      label: "Broad Match",
+      id: 'broadMatch',
+      label: 'Broad Match',
     },
 
   ];
   constructor(private http: HttpClient) {}
   async fetchSKOS(url: string) {
-    let skos = await this.http.get<any>(url).toPromise();
+    const skos = await this.http.get<any>(url).toPromise();
     const nodes = [];
     this.transform(skos.title.de, skos.hasTopConcept, nodes);
     return nodes;
   }
-  async getLinkStructure(url: string) {
+  async getLinkStructure(url: string, linkFilter: string) {
     const nodes = await this.fetchSKOS(
       url
     );
-    //skos = await this.http.get<any>('https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/learningResourceType/index.json').toPromise();
-    //this.transform(skos.hasTopConcept, nodes);
+    // skos = await this.http.get<any>('https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/learningResourceType/index.json').toPromise();
+    // this.transform(skos.hasTopConcept, nodes);
 
-    return await this.buildLinks(nodes);
+    return await this.buildLinks(nodes, linkFilter);
   }
-  async buildLinks(nodes: any[]) {
+  async buildLinks(nodes: any[], linkFilter: string) {
     const links = [];
     const urls = new Set<string>();
     nodes.forEach((element) => {
-      SKOSService.SUPPORTED_LINKS.forEach((link) => {
+      SKOSService.SUPPORTED_LINKS.filter(
+        (l) => linkFilter ? linkFilter === l.id : true
+      ).forEach((link) => {
         if (element.skos[link.id]) {
           element.skos[link.id].forEach((target: any) => {
             // const target = nodes.filter((n) => n.id === related)[0];
             links.push({
-              id: "Link" + Math.random().toString().replace(".", ""),
+              id: 'Link' + Math.random().toString().replace('.', ''),
               source: element.id,
               target: target.id,
               label: link.label,
             });
-            const targetUrl = target.id.split("/");
-            targetUrl[targetUrl.length - 1] = "index.json";
+            const targetUrl = target.id.split('/');
+            targetUrl[targetUrl.length - 1] = 'index.json';
             urls.add(targetUrl.join('/'));
           });
         }
@@ -67,7 +69,7 @@ export class SKOSService {
       nodes = nodes.concat(await this.fetchSKOS(url));
     }
     links.forEach(l => {
-      if(!nodes.find(n => n.id === l.target)) {
+      if (!nodes.find(n => n.id === l.target)) {
         console.error('Invalid link target found', l);
         links.splice(links.indexOf(l), 1);
       }
@@ -87,7 +89,7 @@ export class SKOSService {
         parentCopy.push(element);
         this.transform(title, element.narrower, flat, parentCopy);
       }
-      let path = parent.map((p) => p.prefLabel.de);
+      const path = parent.map((p) => p.prefLabel.de);
       path.splice(0, 0, title);
       if (path) {
         // path += ' -> ';

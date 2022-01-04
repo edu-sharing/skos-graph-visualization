@@ -7,16 +7,21 @@ import { SKOSService } from './skos.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  readonly SUPPORTED_LINKS = SKOSService.SUPPORTED_LINKS;
   title = 'graph';
   readonly window = window;
   data: any;
+  url = 'https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/new_lrt/index.json';
+  link = '';
   constructor(
     private skos: SKOSService
   ) {
   }
   async ngOnInit() {
-    this.data = await this.skos.getLinkStructure(
-      'https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/new_lrt/index.json'
-    );
+
+  }
+
+  async loadSKOS() {
+    this.data = await this.skos.getLinkStructure(this.url, this.link);
   }
 }

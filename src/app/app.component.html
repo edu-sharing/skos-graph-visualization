@@ -2,6 +2,20 @@
   layout="colaForceDirected"
 -->
 <!--   [links]="data.links"-->
+<form (ngSubmit)="loadSKOS()">
+  <mat-form-field>
+    <mat-label>SKOS Vocab-URL</mat-label>
+    <input matInput type="text" [(ngModel)]="url" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Show links of type</mat-label>
+    <mat-select [(ngModel)]="link" [ngModelOptions]="{standalone: true}">
+      <mat-option value="">All Types</mat-option>
+      <mat-option *ngFor="let link of SUPPORTED_LINKS" [value]="link.id">{{link.label}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button mat-flat-button color="primary" type="submit">Load</button>
+</form>
 <ngx-graph
   *ngIf="data"
   class="chart-container"
@@ -13,23 +27,23 @@
   [showMiniMap]="true"
 >
 
-<ng-template #nodeTemplate let-node>
-  <svg:g class="node">
-    <svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height + 2" [attr.fill]="node.data.color" />
-    <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 -5">{{node.label}}</svg:text>
-    <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 + 8" [attr.font-size]="7">{{node.path}}</svg:text>
-  </svg:g>
-</ng-template>
+  <ng-template #nodeTemplate let-node>
+    <svg:g class="node">
+      <svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height + 2" [attr.fill]="node.data.color" />
+      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 -5">{{node.label}}</svg:text>
+      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 + 8" [attr.font-size]="7">{{node.path}}</svg:text>
+    </svg:g>
+  </ng-template>
 
-<ng-template #linkTemplate let-link>
-  <svg:g class="edge">
-    <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
-    </svg:path>
-    <svg:text class="edge-label" text-anchor="middle">
-      <textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
-        {{link.label}}
-      </textPath>
-    </svg:text>
-  </svg:g>
-</ng-template>
+  <ng-template #linkTemplate let-link>
+    <svg:g class="edge">
+      <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+      </svg:path>
+      <svg:text class="edge-label" text-anchor="middle">
+        <textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+          {{link.label}}
+        </textPath>
+      </svg:text>
+    </svg:g>
+  </ng-template>
 </ngx-graph>
