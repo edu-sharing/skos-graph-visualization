@@ -31,21 +31,21 @@ export class SKOSService {
     this.transform(skos.title.de, skos.hasTopConcept, nodes);
     return nodes;
   }
-  async getLinkStructure(url: string, linkFilter: string) {
+  async getLinkStructure(url: string, config: { link: string; hideEmpty: boolean }) {
     const nodes = await this.fetchSKOS(
       url
     );
     // skos = await this.http.get<any>('https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/learningResourceType/index.json').toPromise();
     // this.transform(skos.hasTopConcept, nodes);
 
-    return await this.buildLinks(nodes, linkFilter);
+    return await this.buildLinks(nodes, config);
   }
-  async buildLinks(nodes: any[], linkFilter: string) {
+  async buildLinks(nodes: any[], config: { link: string; hideEmpty: boolean }) {
     const links = [];
     const urls = new Set<string>();
     nodes.forEach((element) => {
       SKOSService.SUPPORTED_LINKS.filter(
-        (l) => linkFilter ? linkFilter === l.id : true
+        (l) => config.link ? config.link === l.id : true
       ).forEach((link) => {
         if (element.skos[link.id]) {
           element.skos[link.id].forEach((target: any) => {
@@ -63,8 +63,6 @@ export class SKOSService {
         }
       });
     });
-    console.log(urls);
-    console.log(links);
     for (const url of urls) {
       nodes = nodes.concat(await this.fetchSKOS(url));
     }
@@ -74,7 +72,13 @@ export class SKOSService {
         links.splice(links.indexOf(l), 1);
       }
     });
-    console.log(nodes);
+    if (config.hideEmpty) {
+      console.log(nodes);
+      console.log(links);
+      nodes = nodes.filter((n) =>
+        links.some((l) => l.source === n.id || l.target === n.id)
+      );
+    }
     return {
       nodes,
       links
@@ -82,7 +86,6 @@ export class SKOSService {
   }
 
   transform(title: string, skos: any[], flat: any[], parent: any[] = []) {
-    console.log(skos);
     skos.forEach((element) => {
       if (element.narrower) {
         const parentCopy = parent.slice();

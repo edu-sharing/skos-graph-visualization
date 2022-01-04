@@ -14,6 +14,7 @@
       <mat-option *ngFor="let link of SUPPORTED_LINKS" [value]="link.id">{{link.label}}</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-checkbox [(ngModel)]="hideEmpty" [ngModelOptions]="{standalone: true}">Hide Non-Linked Items</mat-checkbox>
   <button mat-flat-button color="primary" type="submit">Load</button>
 </form>
 <ngx-graph
