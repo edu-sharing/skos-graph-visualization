@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
   data: any;
   url = 'https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/new_lrt/index.json';
   link = '';
+  vocabId = '';
   hideEmpty = false;
   constructor(
     private skos: SKOSService
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
   async loadSKOS() {
     this.data = await this.skos.getLinkStructure(this.url, {
       link: this.link,
+      vocabId: this.vocabId,
       hideEmpty: this.hideEmpty,
     });
   }

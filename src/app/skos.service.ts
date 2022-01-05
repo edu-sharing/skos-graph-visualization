@@ -31,7 +31,7 @@ export class SKOSService {
     this.transform(skos.title.de, skos.hasTopConcept, nodes);
     return nodes;
   }
-  async getLinkStructure(url: string, config: { link: string; hideEmpty: boolean }) {
+  async getLinkStructure(url: string, config: { link: string; hideEmpty: boolean; vocabId: string }) {
     const nodes = await this.fetchSKOS(
       url
     );
@@ -40,8 +40,8 @@ export class SKOSService {
 
     return await this.buildLinks(nodes, config);
   }
-  async buildLinks(nodes: any[], config: { link: string; hideEmpty: boolean }) {
-    const links = [];
+  async buildLinks(nodes: any[], config: { link: string; hideEmpty: boolean; vocabId: string }) {
+    let links = [];
     const urls = new Set<string>();
     nodes.forEach((element) => {
       SKOSService.SUPPORTED_LINKS.filter(
@@ -72,9 +72,17 @@ export class SKOSService {
         links.splice(links.indexOf(l), 1);
       }
     });
+    if (config.vocabId) {
+      nodes = nodes.filter((n) =>
+        n.id.toLowerCase().includes(config.vocabId.toLowerCase()) ||
+        links.some((l) => (l.source === n.id) && l.target.toLowerCase().includes(config.vocabId.toLowerCase()))
+      );
+      links = links.filter(l =>
+        nodes.find(n => (n.id === l.source)) &&
+        nodes.find(n => (n.id === l.target))
+      );
+    }
     if (config.hideEmpty) {
-      console.log(nodes);
-      console.log(links);
       nodes = nodes.filter((n) =>
         links.some((l) => l.source === n.id || l.target === n.id)
       );
