@@ -2,23 +2,24 @@
   layout="colaForceDirected"
 -->
 <!--   [links]="data.links"-->
-<form (ngSubmit)="loadSKOS()">
+<form (ngSubmit)="loadSKOS()"
+      [formGroup]="form">
   <mat-form-field>
     <mat-label>SKOS Vocab-URL</mat-label>
-    <input matInput type="text" [(ngModel)]="url" [ngModelOptions]="{standalone: true}">
+    <input matInput type="text" formControlName="url">
   </mat-form-field>
   <mat-form-field>
     <mat-label>Filter Target Vocab Id</mat-label>
-    <input matInput type="text" placeholder="e.g. 'learningResourceType'" [(ngModel)]="vocabId" [ngModelOptions]="{standalone: true}">
+    <input matInput type="text" placeholder="e.g. 'learningResourceType'" formControlName="vocabId">
   </mat-form-field>
   <mat-form-field>
     <mat-label>Show links of type</mat-label>
-    <mat-select [(ngModel)]="link" [ngModelOptions]="{standalone: true}">
+    <mat-select formControlName="link">
       <mat-option value="">All Types</mat-option>
       <mat-option *ngFor="let link of SUPPORTED_LINKS" [value]="link.id">{{link.label}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-checkbox [(ngModel)]="hideEmpty" [disabled]="!!vocabId" [ngModelOptions]="{standalone: true}">Hide Non-Linked Items</mat-checkbox>
+  <mat-checkbox [disabled]="!!queryParams.vocabId" formControlName="hideEmpty">Hide Non-Linked Items</mat-checkbox>
   <button mat-flat-button color="primary" type="submit">Load</button>
 </form>
 <ngx-graph
