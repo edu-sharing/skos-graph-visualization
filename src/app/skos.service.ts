@@ -41,6 +41,24 @@ export class SKOSService {
     return await this.buildLinks(nodes, config);
   }
   async buildLinks(nodes: any[], config: { link: string; hideEmpty: boolean; vocabId: string }) {
+    const primaryNodes = nodes.slice();
+    const clusters = [];
+    nodes.forEach((n) => {
+      const path = n.pathData[0] || n;
+      const found = clusters.find((c) => c.id === path.id + '_cluster');
+      console.log(path.id, found);
+      if (found) {
+        found.childNodeIds.push(n.id);
+      } else {
+        clusters.push({
+          id: path.id + '_cluster',
+          label: path.prefLabel.de,
+          childNodeIds: [n.id],
+        });
+      }
+    });
+    console.log(clusters);
+
     let links = [];
     const urls = new Set<string>();
     nodes.forEach((element) => {
@@ -74,6 +92,7 @@ export class SKOSService {
     });
     if (config.vocabId) {
       nodes = nodes.filter((n) =>
+        primaryNodes.find((n2) => n2.id === n.id) ||
         n.id.toLowerCase().includes(config.vocabId.toLowerCase()) ||
         links.some((l) => (l.source === n.id) && l.target.toLowerCase().includes(config.vocabId.toLowerCase()))
       );
@@ -89,7 +108,8 @@ export class SKOSService {
     }
     return {
       nodes,
-      links
+      links,
+      clusters
     };
   }
 
@@ -108,6 +128,7 @@ export class SKOSService {
       flat.push({
         id: element.id,
         label: element.prefLabel.de,
+        pathData: parent,
         path: path.join(' -> '),
         skos: element,
       });

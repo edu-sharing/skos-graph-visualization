@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SKOSService } from './skos.service';
 import {ActivatedRoute, Params, Route, Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {skip} from "rxjs/operators";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {skip} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -42,8 +42,8 @@ export class AppComponent implements OnInit {
     });
     this.route.queryParams.subscribe((q) => {
       q = JSON.parse(JSON.stringify(q));
-      console.log(q);
       q.url = q.url ?? 'https://vocabs.openeduhub.de/w3id.org/openeduhub/vocabs/new_lrt/index.json';
+      q.hideEmpty = q.hideEmpty === 'true';
       this.queryParams = q;
       this.form.patchValue(q);
     });

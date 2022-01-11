@@ -19,12 +19,14 @@
       <mat-option *ngFor="let link of SUPPORTED_LINKS" [value]="link.id">{{link.label}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-checkbox [disabled]="!!queryParams.vocabId" formControlName="hideEmpty">Hide Non-Linked Items</mat-checkbox>
+  <mat-checkbox formControlName="hideEmpty">Hide Non-Linked Items</mat-checkbox>
   <button mat-flat-button color="primary" type="submit">Load</button>
 </form>
 <ngx-graph
   *ngIf="data"
   class="chart-container"
+  layout="dagreCluster"
+  [clusters]="data.clusters"
   [view]=[window.innerWidth,window.innerHeight]
   [nodes]="data.nodes"
   [links]="data.links"
