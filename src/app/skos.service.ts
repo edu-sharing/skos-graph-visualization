@@ -42,7 +42,7 @@ export class SKOSService {
   }
   async buildLinks(nodes: any[], config: { link: string; hideEmpty: boolean; vocabId: string }) {
     const primaryNodes = nodes.slice();
-    const clusters = [];
+    let clusters = [];
     nodes.forEach((n) => {
       const path = n.pathData[0] || n;
       const found = clusters.find((c) => c.id === path.id + '_cluster');
@@ -105,6 +105,10 @@ export class SKOSService {
       nodes = nodes.filter((n) =>
         links.some((l) => l.source === n.id || l.target === n.id)
       );
+      clusters = clusters.map((c) => {
+        c.childNodeIds = c.childNodeIds.filter((id) => nodes.some(n => n.id === id));
+        return c;
+      });
     }
     return {
       nodes,
