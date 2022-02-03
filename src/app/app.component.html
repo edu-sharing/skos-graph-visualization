@@ -36,11 +36,16 @@
 >
 
   <ng-template #nodeTemplate let-node>
-    <svg:g class="node">
-      <svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height + 2" [attr.fill]="node.data.color" />
-      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 -5">{{node.label}}</svg:text>
-      <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 + 8" [attr.font-size]="7">{{node.path}}</svg:text>
-    </svg:g>
+    <svg class="node" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <g>
+        <a [attr.href]="node.id" target="_blank">
+          <rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height + 2" [attr.fill]="node.data.color" />
+          <text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 - 7">{{node.label}}</text>
+          <text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 + 6" [attr.font-size]="7">{{node.path}}</text>
+          <text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2 + 14" [attr.font-size]="4">{{node.id}}</text>
+        </a>
+      </g>
+    </svg>
   </ng-template>
 
   <ng-template #linkTemplate let-link>
